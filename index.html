@@ -10,11 +10,29 @@
     left: 0px;
     background: transparent;
   }
+  #background {
+    z-index: -2;
+  }
+  #main {
+    z-index: -1;
+  }
+  #ship {
+    z-index: 0;
+  }
 </style>
 </head>
-<body onload="init()">
+<body>
   <!-- The canvas for background scrolling -->
   <canvas id="background" width="600" height="360">Sorry, this game requires a newer brower that supports the canvas element.</canvas>
+  
+<!-- the canvas for all enemy ships and bullets -->
+<canvas id="main" width="600" height="360">
+</canvas>
+
+<!-- the canvas the player's ship uses (movement limited to bottom quarter of screen) -->
+<canvas id="ship" width="600" height="360">
+</canvas>
+
   <script src="galactic_invasion_background.js"></script>
 </body>
 </html>
