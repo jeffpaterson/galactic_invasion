@@ -8,8 +8,7 @@
 var game = new Game();
 
 function init() {
-  if(game.init())
-    game.start();
+  game.init();
 }
 
 // Define an object to hold all images for the game.
@@ -172,6 +171,43 @@ this.draw = function() {
 }
 
 Bullet.prototype = new Drawable();
+
+
+// A sound pool to use for the sound effects
+function SoundPool (maxSize) {
+  var size = maxSize; // Max sounds allowed in the pool
+  var pool = [];
+  this.pool = pool;
+  var currSound = 0;
+
+  // Poplates the pool array with the given sound
+  this.init = function(object) {
+    if (object == "laser") {
+      for (var i = 0; i < size ; i++) {
+        // initalize the sound
+        laser = new Audio("sounds/laser.wav");
+        laser.volume = 0.12;
+        laser.load();
+        pool[i] = laser;
+      }
+    }
+    else if (object == "explosion") {
+      for (var i=0; i < size; i++) {
+        var explosion = new Audio("sounds/explosion.wav");
+        explosion.volume = 0.1;
+        explosion.load();
+        pool[i] = laser;
+      }
+    }
+  };
+
+  this.get = function() {
+    if(pool[currSound].currentTime === 0 || pool[currSound].ended) {
+      pool[currSound].play();
+    }
+    currSound = (currSound + 1) % size;
+  };
+}
 
 
 // requestAnimFrame shim layer by Paul Irish
@@ -505,6 +541,8 @@ function Ship() {
   this.fire = function() {
     this.bulletPool.getTwo(this.x+6, this.y, 3, 
                             this.x+33, this.y, 3);
+    // Play audio when firing laser
+    game.laser.get();
     };
 }
 Ship.prototype = new Drawable();
@@ -557,6 +595,10 @@ function Enemy() {
       return false;
     }
     else {
+      // Add to player's score
+      game.playerScore += 10;
+      // Play audio of enemy getting hit
+      game.explosion.get();
       return true;
     }
   };
@@ -585,7 +627,24 @@ function Game() {
   // This stops the animation  from running on browsers that don't support it.
 
   this.init = function() {
-      // Get the canvas elements
+    this.playerScore = 0;
+    // Audio files
+    this.laser = new SoundPool(10);
+    this.laser.init("laser");
+    this.explosion = new SoundPool(20);
+    this.explosion.init("explosion");
+    this.backgroundAudio = new Audio("sounds/kick_shock.wav");
+    this.backgroundAudio.loop = true;
+    this.backgroundAudio.volume = 0.2;
+    this.backgroundAudio.load();
+    this.gameOverAudio = new Audio("sounds/game_over.wav");
+    this.gameOverAudio.loop = true;
+    this.gameOverAudio.volume = 0.3;
+    this.gameOverAudio.load();
+
+    this.checkAudio = window.setInterval(function(){checkReadyState();},1000);
+
+    // Get the canvas elements
     this.bgCanvas = document.getElementById('background');
     this.shipCanvas = document.getElementById('ship');
     this.mainCanvas = document.getElementById('main');
@@ -657,14 +716,27 @@ function Game() {
     // Start animation loop
     this.start = function() {
       this.ship.draw();
+      this.backgroundAudio.play();
       animate();
     };
+}
+
+// Ensure the game sound has loaded before starting the game 
+function checkReadyState() {
+  if (game.gameOverAudio.readyState === 4 && game.backgroundAudio.readyState === 4) {
+    window.clearInterval(game.checkAudio);
+    game.start();
+  }
 }
 
 // The animation loop. Calls the requestAnimationFrame shim to 
 // optimize the game loop and draws all game objects. This
 // function must be a global function and cannot be within an object.
 function animate() {
+
+  // Display the score
+  document.getElementById('score').innerHTML = game.playerScore;
+
   // Insert objects into quadTree
   game.quadTree.clear();
   game.quadTree.insert(game.ship);
