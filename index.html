@@ -6,8 +6,8 @@
 <style>
     canvas {
       position: absolute;
-      top: 0px;
-      left: 0px;
+      top: 5px;
+      left: 25px;
       background: transparent;
     }
     #background {
@@ -23,18 +23,20 @@
   .score {
     position: absolute;
     top: 5px;
-    left: 480px;
-    color: #FF7F00;
+    left: 580px;
+    color: #FF00FF;
     font-family: Helvetica, sans-serif;
     cursor: default;
+    font-weight: bold;
   }
   .game-over {
     position: absolute;
-    top: 100px;
-    left: 210px;
-    color: #FF7F00;
+    top: 150px;
+    left: 100px;
+    color: #FF00FF;
     font-family: Helvetica, sans-serif;
-    font-size: 30px;
+    font-size: 80px;
+    font-weight: bolder;
     cursor: default;
     display: none;
   }
@@ -42,16 +44,16 @@
     font-size: 20px;
     cursor: pointer;
     position: relative;
-    left: 50px;
+    left: 200px;
   }
   .game-over span:hover {
     color: #FFD700;
   }
   .loading {
         position: absolute;
-        top: 100px;
-        left: 210px;
-        color: #FF7F00;
+        top: 200px;
+        left: 240px;
+        color: #FFD700;
         font-family: Helvetica, sans-serif;
         font-size: 30px;
         cursor: default;
@@ -59,21 +61,26 @@
 </style>
 </head>
 
-<body>
+<body bgcolor="99FF66">
+  <!-- original size 600 x 360 -->
+
   <!-- The canvas for background scrolling -->
-  <canvas id="background" width="600" height="360">Sorry, this game requires a newer brower that supports the canvas element.</canvas>
+  <canvas id="background" width="700" height="550">Sorry, this game requires a newer brower that supports the canvas element.</canvas>
   
   <!-- the canvas for all enemy ships and bullets -->
-  <canvas id="main" width="600" height="360">
+  <canvas id="main" width="700" height="550">
   </canvas>
 
   <!-- the canvas the player's ship uses (movement limited to bottom quarter of screen) -->
-  <canvas id="ship" width="600" height="360">
+  <canvas id="ship" width="700" height="550">
   </canvas>
 
   <div class="score">SCORE: <span id="score"></span></div>
   <div class="game-over" id="game-over">GAME OVER<p><span onclick="game.restart()">Restart</span></p></div>
-  <div class="loading" id="loading">LOADING...<p>Please wait</p></div>
+  <div class="loading" id="loading">
+  LOADING GAME<P>Please wait a moment ...
+  </div>
   <script src="galactic.js"></script>
+
 </body>
 </html>

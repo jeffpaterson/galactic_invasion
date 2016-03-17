@@ -44,11 +44,11 @@ var imageRepository = new function() {
   };
 
   // Set images src
-  this.background.src = "imgs/bg.png";
-  this.spaceship.src = "imgs/ship.png";
-  this.bullet.src = "imgs/bullet.png";
-  this.enemy.src = "imgs/enemy.png";
-  this.enemyBullet.src = "imgs/bullet_enemy.png";
+  this.background.src = "imgs/bg-grass.jpg";
+  this.spaceship.src = "imgs/rabbit.png";
+  this.bullet.src = "imgs/bullet_enemy.png";
+  this.enemy.src = "imgs/pig.png";
+  this.enemyBullet.src = "imgs/bullet.png";
 }();
 
 
@@ -91,7 +91,7 @@ function Drawable() {
  * canvas and creates the illusion of moving by panning the image.
  */
 function Background() {
-  this.speed = 1; // Redefine speed of the background for panning
+  this.speed = 0.5; // Redefine speed of the background for panning
 
   // Implement abstract function
   this.draw = function() {
@@ -592,8 +592,8 @@ function Enemy() {
     this.speedY = speed;
     this.alive = true;
     this.leftEdge = this.x - 90;
-    this.rightEdge = this.x + 90;
-    this.bottomEdge = this.y + 140;
+    this.rightEdge = this.x + 190; //orig 90
+    this.bottomEdge = this.y + 240; //orig 140
   };
 
   /*
@@ -732,17 +732,21 @@ function Game() {
       this.explosion = new SoundPool(20);
       this.explosion.init("explosion");
 
-      this.backgroundAudio = new Audio("sounds/kick_shock.wav");
+      this.backgroundAudio = new Audio("sounds/flower.wav");
       this.backgroundAudio.loop = true;
       this.backgroundAudio.volume = 0.25;
       this.backgroundAudio.load();
 
-      this.gameOverAudio = new Audio("sounds/game_over.wav");
-      this.gameOverAudio.loop = true;
-      this.gameOverAudio.volume = 0.25;
+      this.gameOverAudio = new Audio("sounds/pig-over.wav");
+      this.gameOverAudio.loop = false;
+      this.gameOverAudio.volume = 0.5;
       this.gameOverAudio.load();
 
       this.checkAudio = window.setInterval(function(){checkReadyState();},1000);
+
+      document.getElementById('background').innerHTML = "<img src='img/intro.png'>";
+
+
     }
   };
 
@@ -834,7 +838,7 @@ function SoundPool(maxSize) {
     if (object == "laser") {
       for (var i = 0; i < size; i++) {
         // Initalize the object
-        laser = new Audio("sounds/laser.wav");
+        laser = new Audio("sounds/pop.wav");
         laser.volume = 0.12;
         laser.load();
         pool[i] = laser;
@@ -842,7 +846,7 @@ function SoundPool(maxSize) {
     }
     else if (object == "explosion") {
       for (var i = 0; i < size; i++) {
-        var explosion = new Audio("sounds/explosion.wav");
+        var explosion = new Audio("sounds/pig.wav");
         explosion.volume = 0.1;
         explosion.load();
         pool[i] = explosion;
