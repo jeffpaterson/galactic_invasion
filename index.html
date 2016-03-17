@@ -19,6 +19,11 @@
     #ship {
       z-index: 0;
     }
+    #splashscreen {
+    height: 100%;
+    width: 100%;
+    z-index: 99;
+    }
 
   .score {
     position: absolute;
@@ -62,8 +67,9 @@
 </head>
 
 <body bgcolor="99FF66">
+  
   <!-- original size 600 x 360 -->
-
+ <div id="splashscreen"><img src="imgs/intro.png" hspace="70" vspace="50" width="600" alt="Intro screen"></div>
   <!-- The canvas for background scrolling -->
   <canvas id="background" width="700" height="550">Sorry, this game requires a newer brower that supports the canvas element.</canvas>
   
@@ -78,9 +84,11 @@
   <div class="score">SCORE: <span id="score"></span></div>
   <div class="game-over" id="game-over">GAME OVER<p><span onclick="game.restart()">Restart</span></p></div>
   <div class="loading" id="loading">
-  LOADING GAME<P>Please wait a moment ...
   </div>
-  <script src="galactic.js"></script>
+ 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script src="invasion.js"></script>
+
 
 </body>
 </html>

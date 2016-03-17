@@ -1,6 +1,7 @@
 var game = new Game();
 
 function init() {
+        $('#splashscreen').fadeOut(2000);
   game.init();
 }
 
@@ -13,13 +14,15 @@ function init() {
 var imageRepository = new function() {
   // Define images
   this.background = new Image();
+  this.background2 = new Image();
   this.spaceship = new Image();
   this.bullet = new Image();
   this.enemy = new Image();
+  this.enemy2 = new Image();
   this.enemyBullet = new Image();
 
   // Ensure all images have loaded before starting the game
-  var numImages = 5;
+  var numImages = 7;
   var numLoaded = 0;
   function imageLoaded() {
     numLoaded++;
@@ -28,6 +31,9 @@ var imageRepository = new function() {
     }
   }
   this.background.onload = function() {
+    imageLoaded();
+  };
+  this.background2.onload = function() {
     imageLoaded();
   };
   this.spaceship.onload = function() {
@@ -39,15 +45,20 @@ var imageRepository = new function() {
   this.enemy.onload = function() {
     imageLoaded();
   };
+  this.enemy2.onload = function() {
+    imageLoaded();
+  };
   this.enemyBullet.onload = function() {
     imageLoaded();
   };
 
   // Set images src
-  this.background.src = "imgs/bg-grass.jpg";
+  this.background2.src = "imgs/bg-grass.jpg";
+  this.background.src = "imgs/flower-fore.png";
   this.spaceship.src = "imgs/rabbit.png";
   this.bullet.src = "imgs/bullet_enemy.png";
-  this.enemy.src = "imgs/pig.png";
+  this.enemy.src = "imgs/pig2.png";
+  this.enemy2.src = "imgs/pig.png";
   this.enemyBullet.src = "imgs/bullet.png";
 }();
 
@@ -91,22 +102,49 @@ function Drawable() {
  * canvas and creates the illusion of moving by panning the image.
  */
 function Background() {
-  this.speed = 0.5; // Redefine speed of the background for panning
+  // this.speed = 0.5; // Redefine speed of the background for panning
+
+  // // Implement abstract function
+  // this.draw = function() {
+  //   // Pan background
+  //   this.y += this.speed;
+  //   //this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight);
+  //   this.context.drawImage(imageRepository.background, this.x, this.y);
+
+  //   // Draw another image at the top edge of the first image
+  //   this.context.drawImage(imageRepository.background, this.x, this.y - this.canvasHeight);
+
+  //   // If the image scrolled off the screen, reset
+  //   if (this.y >= this.canvasHeight)
+  //     this.y = 0;
+  // };
+
+  this.velocity = {'x': 0, 'y': 0.8}; // Redefine speed of the background for panning
+  this.velocity2 = {'x': 0, 'y': 0.2};
+  this.y2 = 0;
+
 
   // Implement abstract function
   this.draw = function() {
     // Pan background
-    this.y += this.speed;
-    //this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight);
-    this.context.drawImage(imageRepository.background, this.x, this.y);
+    this.y += this.velocity.y;
+    this.y2 += this.velocity2.y;
 
-    // Draw another image at the top edge of the first image
+    // draw the nebulous background
+    this.context.drawImage(imageRepository.background2, this.x, this.y2);
+    this.context.drawImage(imageRepository.background2, this.x, (this.y2 - imageRepository.background2.height));
+
+    // draw the starry background
+    this.context.drawImage(imageRepository.background, this.x, this.y);
     this.context.drawImage(imageRepository.background, this.x, this.y - this.canvasHeight);
 
     // If the image scrolled off the screen, reset
     if (this.y >= this.canvasHeight)
-      this.y = 0;
+       this.y = 0;
+    if (this.y2 >= imageRepository.background2.height)
+      this.y2 = 0;
   };
+
 }
 // Set Background to inherit properties from Drawable
 Background.prototype = new Drawable();
@@ -230,7 +268,6 @@ function QuadTree(boundBox, lvl) {
    */
   this.findObjects = function(returnedObjects, obj) {
     if (typeof obj === "undefined") {
-      console.log("UNDEFINED OBJECT");
       return;
     }
 
@@ -563,8 +600,9 @@ function Ship() {
    * Fires two bullets
    */
   this.fire = function() {
-    this.bulletPool.getTwo(this.x+6, this.y, 3,
-                           this.x+33, this.y, 3);
+    this.bulletPool.get(this.x+25, this.y, 2.5); //speed of bullet
+    // this.bulletPool.getTwo(this.x+6, this.y, 3,
+    //                         this.x+33, this.y, 3);
     game.laser.get();
   };
 }
@@ -591,9 +629,9 @@ function Enemy() {
     this.speedX = 0;
     this.speedY = speed;
     this.alive = true;
-    this.leftEdge = this.x - 90;
-    this.rightEdge = this.x + 190; //orig 90
-    this.bottomEdge = this.y + 240; //orig 140
+    this.leftEdge = this.x - 105;
+    this.rightEdge = this.x + 40; //orig 90
+    this.bottomEdge = this.y + 280; //orig 140
   };
 
   /*
@@ -610,7 +648,7 @@ function Enemy() {
       this.speedX = -this.speed;
     }
     else if (this.y >= this.bottomEdge) {
-      this.speed = 1.5;
+      this.speed = this.speed * 1.5;
       this.speedY = 0;
       this.y -= 5;
       this.speedX = -this.speed;
@@ -713,11 +751,11 @@ function Game() {
                      imageRepository.spaceship.width, imageRepository.spaceship.height);
 
       // Initialize the enemy pool object
-      this.enemyPool = new Pool(30);
+      this.enemyPool = new Pool(50);
       this.enemyPool.init("enemy");
       this.spawnWave();
 
-      this.enemyBulletPool = new Pool(50);
+      this.enemyBulletPool = new Pool(80);
       this.enemyBulletPool.init("enemyBullet");
 
       // Start QuadTree
@@ -734,7 +772,7 @@ function Game() {
 
       this.backgroundAudio = new Audio("sounds/flower.wav");
       this.backgroundAudio.loop = true;
-      this.backgroundAudio.volume = 0.25;
+      this.backgroundAudio.volume = 0.35;
       this.backgroundAudio.load();
 
       this.gameOverAudio = new Audio("sounds/pig-over.wav");
@@ -744,7 +782,7 @@ function Game() {
 
       this.checkAudio = window.setInterval(function(){checkReadyState();},1000);
 
-      document.getElementById('background').innerHTML = "<img src='img/intro.png'>";
+    //  document.getElementById('background').innerHTML = "<img src='img/intro.png'>";
 
 
     }
@@ -757,10 +795,10 @@ function Game() {
     var x = 100;
     var y = -height;
     var spacer = y * 1.5;
-    for (var i = 1; i <= 18; i++) {
+    for (var i = 1; i <= 28; i++) {
       this.enemyPool.get(x,y,2);
       x += width + 25;
-      if (i % 6 == 0) {
+      if (i % 7 === 0) {
         x = 100;
         y += spacer;
       }
@@ -932,6 +970,7 @@ KEY_CODES = {
   38: 'up',
   39: 'right',
   40: 'down',
+  90: 'z',
 };
 
 // Creates the array to hold the KEY_CODES and sets all their values
