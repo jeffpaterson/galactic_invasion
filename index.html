@@ -47,6 +47,15 @@
   .game-over span:hover {
     color: #FFD700;
   }
+  .loading {
+        position: absolute;
+        top: 100px;
+        left: 210px;
+        color: #FF7F00;
+        font-family: Helvetica, sans-serif;
+        font-size: 30px;
+        cursor: default;
+  }
 </style>
 </head>
 
@@ -64,6 +73,7 @@
 
   <div class="score">SCORE: <span id="score"></span></div>
   <div class="game-over" id="game-over">GAME OVER<p><span onclick="game.restart()">Restart</span></p></div>
+  <div class="loading" id="loading">LOADING...<p>Please wait</p></div>
   <script src="galactic.js"></script>
 </body>
 </html>
