@@ -7,7 +7,6 @@
     canvas {
       position: absolute;
       top: 5px;
-      left: 25px;
       background: transparent;
     }
     #background {
@@ -23,6 +22,13 @@
     height: 100%;
     width: 100%;
     z-index: 99;
+    position: relative;
+    top: 25px;
+    color: #FF00FF;
+    font-family: Helvetica, sans-serif;
+    font-size: 24px;
+    font-weight: bolder;
+    text-align: center;
     }
 
   .score {
@@ -54,13 +60,13 @@
   .game-over span:hover {
     color: #FFD700;
   }
-  .loading {
-        position: absolute;
-        top: 200px;
-        left: 240px;
+  #inst {
+        position: relative;
+        top: 650px;
+        text-align: center;
         color: #FFD700;
         font-family: Helvetica, sans-serif;
-        font-size: 30px;
+        font-size: 16px;
         cursor: default;
   }
 </style>
@@ -69,7 +75,7 @@
 <body bgcolor="99FF66">
   
   <!-- original size 600 x 360 -->
- <div id="splashscreen"><img src="imgs/intro.png" hspace="70" vspace="50" width="600" alt="Intro screen"></div>
+ <div id="splashscreen"><img src="imgs/intro.png" hspace="70" vspace="50" width="600" alt="Intro screen"><P>Hold 'z' for double fire!<P>Pigs are 10 pts, but each shot costs 1 pt.</div>
   <!-- The canvas for background scrolling -->
   <canvas id="background" width="700" height="550">Sorry, this game requires a newer brower that supports the canvas element.</canvas>
   
@@ -83,8 +89,9 @@
 
   <div class="score">SCORE: <span id="score"></span></div>
   <div class="game-over" id="game-over">GAME OVER<p><span onclick="game.restart()">Restart</span></p></div>
-  <div class="loading" id="loading">
-  </div>
+ <div id="loading"></div>
+
+  <div class="score" id="inst"></div>
  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="invasion.js"></script>

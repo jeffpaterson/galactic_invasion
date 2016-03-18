@@ -1,8 +1,8 @@
 var game = new Game();
+var gamePaused = false;
 
 function init() {
-        $('#splashscreen').fadeOut(2000);
-  game.init();
+      $('#splashscreen').fadeOut(2500, "swing", game.init());
 }
 
 
@@ -55,7 +55,7 @@ var imageRepository = new function() {
   // Set images src
   this.background2.src = "imgs/bg-grass.jpg";
   this.background.src = "imgs/flower-fore.png";
-  this.spaceship.src = "imgs/rabbit.png";
+  this.spaceship.src = "imgs/rabbit.gif";
   this.bullet.src = "imgs/bullet_enemy.png";
   this.enemy.src = "imgs/pig2.png";
   this.enemy2.src = "imgs/pig.png";
@@ -130,11 +130,11 @@ function Background() {
     this.y += this.velocity.y;
     this.y2 += this.velocity2.y;
 
-    // draw the nebulous background
+    // draw the far flower background
     this.context.drawImage(imageRepository.background2, this.x, this.y2);
     this.context.drawImage(imageRepository.background2, this.x, (this.y2 - imageRepository.background2.height));
 
-    // draw the starry background
+    // draw the near flower background
     this.context.drawImage(imageRepository.background, this.x, this.y);
     this.context.drawImage(imageRepository.background, this.x, this.y - this.canvasHeight);
 
@@ -531,7 +531,7 @@ function Pool(maxSize) {
 function Ship() {
   this.speed = 3;
   this.bulletPool = new Pool(30);
-  var fireRate = 15;
+  var fireRate = 12;
   var counter = 0;
   this.collidableWith = "enemyBullet";
   this.type = "ship";
@@ -552,6 +552,7 @@ function Ship() {
   };
   this.move = function() {
     counter++;
+
     // Determine if the action is move action
     if (KEY_STATUS.left || KEY_STATUS.right ||
         KEY_STATUS.down || KEY_STATUS.up) {
@@ -600,9 +601,18 @@ function Ship() {
    * Fires two bullets
    */
   this.fire = function() {
-    this.bulletPool.get(this.x+25, this.y, 2.5); //speed of bullet
-    // this.bulletPool.getTwo(this.x+6, this.y, 3,
-    //                         this.x+33, this.y, 3);
+    // Adds one point cost for firing each bullet, but score can't be less than zero.
+    game.playerScore -= 1;
+    if (game.playerScore < 0) {
+      game.playerScore = 0;}
+
+      if (KEY_STATUS.z) {
+        this.bulletPool.getTwo(this.x+6, this.y, 2,
+                             this.x+33, this.y, 2);
+      } else {
+        this.bulletPool.get(this.x+25, this.y, 2.5);
+        }
+
     game.laser.get();
   };
 }
@@ -613,7 +623,7 @@ Ship.prototype = new Drawable();
  * Create the Enemy ship object.
  */
 function Enemy() {
-  var percentFire = 0.01;
+  var percentFire = 0.007;
   var chance = 0;
   this.alive = false;
   this.collidableWith = "bullet";
@@ -746,7 +756,7 @@ function Game() {
       this.ship = new Ship();
       // Set the ship to start near the bottom middle of the canvas
       this.shipStartX = this.shipCanvas.width/2 - imageRepository.spaceship.width;
-      this.shipStartY = this.shipCanvas.height/4*3 + imageRepository.spaceship.height*2;
+      this.shipStartY = this.shipCanvas.height/4*3 + imageRepository.spaceship.height;
       this.ship.init(this.shipStartX, this.shipStartY,
                      imageRepository.spaceship.width, imageRepository.spaceship.height);
 
@@ -781,11 +791,10 @@ function Game() {
       this.gameOverAudio.load();
 
       this.checkAudio = window.setInterval(function(){checkReadyState();},1000);
-
-    //  document.getElementById('background').innerHTML = "<img src='img/intro.png'>";
-
-
     }
+      function keyDown(e) {
+        if (e.keyCode == 80) pauseGame();
+        }
   };
 
   // Spawn a new wave of enemies
@@ -795,6 +804,7 @@ function Game() {
     var x = 100;
     var y = -height;
     var spacer = y * 1.5;
+    // Enemy total (i), and enemy number across row (i%x)
     for (var i = 1; i <= 28; i++) {
       this.enemyPool.get(x,y,2);
       x += width + 25;
@@ -877,7 +887,7 @@ function SoundPool(maxSize) {
       for (var i = 0; i < size; i++) {
         // Initalize the object
         laser = new Audio("sounds/pop.wav");
-        laser.volume = 0.12;
+        laser.volume = 0.2;
         laser.load();
         pool[i] = laser;
       }
@@ -973,6 +983,8 @@ KEY_CODES = {
   90: 'z',
 };
 
+
+
 // Creates the array to hold the KEY_CODES and sets all their values
 // to true. Checking true/flase is the quickest way to check status
 // of a key press and which one was pressed when determining
@@ -1010,6 +1022,15 @@ document.onkeyup = function(e) {
   }
 };
 
+function pauseGame() {
+  if (!gamePaused) {
+    game = clearTimeout(game);
+    gamePaused = true;
+  } else if (gamePaused) {
+    game = setTimeout(gameLoop, 1000 / 30);
+    gamePaused = false;
+  }
+}
 
 /**
  * requestAnim shim layer by Paul Irish
