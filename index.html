@@ -40,22 +40,32 @@
     cursor: default;
     font-weight: bold;
   }
+  .gameLevel {
+    position: absolute;
+    top: 5px;
+    left: 20px;
+    color: #FF00FF;
+    font-family: Helvetica, sans-serif;
+    cursor: default;
+    font-weight: bold;
+  }
+
   .game-over {
     position: absolute;
     top: 150px;
-    left: 100px;
-    color: #FF00FF;
+    left: 180px;
+    color: #FF9900;
     font-family: Helvetica, sans-serif;
-    font-size: 80px;
+    font-size: 120px;
     font-weight: bolder;
     cursor: default;
     display: none;
   }
   .game-over span {
-    font-size: 20px;
-    cursor: pointer;
+    font-size: 25px;
     position: relative;
-    left: 200px;
+    top: -80px;
+    left: 130px;
   }
   .game-over span:hover {
     color: #FFD700;
@@ -75,7 +85,7 @@
 <body bgcolor="99FF66">
   
   <!-- original size 600 x 360 -->
- <div id="splashscreen"><img src="imgs/intro.png" hspace="70" vspace="50" width="600" alt="Intro screen"><P>Hold 'z' for double fire!<P>Pigs are 10 pts, but each shot costs 1 pt.</div>
+ <div id="splashscreen"><img src="imgs/intro.png" hspace="0" vspace="50" width="600" alt="Intro screen"><P>Hold 'z' for double fire!<P>Pigs are 10 pts, but each shot costs 1 pt.</div>
   <!-- The canvas for background scrolling -->
   <canvas id="background" width="700" height="550">Sorry, this game requires a newer brower that supports the canvas element.</canvas>
   
@@ -88,10 +98,13 @@
   </canvas>
 
   <div class="score">SCORE: <span id="score"></span></div>
-  <div class="game-over" id="game-over">GAME OVER<p><span onclick="game.restart()">Restart</span></p></div>
- <div id="loading"></div>
+  <div class="gameLevel">LEVEL: <span id="gameLevel"></span></div>
+  
+  <div class="game-over" id="game-over">GAME<BR>OVER<p><span onclick="game.restart()">START</span></p></div>
+  <div id="loading"></div>
 
-  <div class="score" id="inst"></div>
+  <div id="inst"></div>
+  <div class="gameLevel"></div>
  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="invasion.js"></script>

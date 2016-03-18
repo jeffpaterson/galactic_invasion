@@ -1,16 +1,14 @@
 var game = new Game();
-var gamePaused = false;
+var gameLevel = 1;
 
 function init() {
-      $('#splashscreen').fadeOut(2500, "swing", game.init());
+      $('#splashscreen').fadeOut(3000, "swing", game.init());
 }
 
 
-/**
- * Define an object to hold all our images for the game so images
- * are only ever created once. This type of object is known as a
- * singleton.
- */
+// Define an object to hold all our images for the game so images
+// are only ever created once. This known as a singleton.
+ 
 var imageRepository = new function() {
   // Define images
   this.background = new Image();
@@ -62,13 +60,10 @@ var imageRepository = new function() {
   this.enemyBullet.src = "imgs/bullet.png";
 }();
 
+  // Creates the Drawable object, the base class for
+  // all objects in the game. Sets up defualt variables
+  // that all child objects will inherit, also the defualt functions.
 
-/**
- * Creates the Drawable object which will be the base class for
- * all drawable objects in the game. Sets up defualt variables
- * that all child objects will inherit, as well as the defualt
- * functions.
- */
 function Drawable() {
   this.init = function(x, y, width, height) {
     // Defualt variables
@@ -85,7 +80,7 @@ function Drawable() {
   this.isColliding = false;
   this.type = "";
 
-  // Define abstract function to be implemented in child objects
+  // Define the abstract function to be implemented in child objects
   this.draw = function() {
   };
   this.move = function() {
@@ -95,34 +90,14 @@ function Drawable() {
   };
 }
 
+ // Creates the Background object which will become a child of
+ // the Drawable object. The background is drawn on the "background" canvas.
 
-/**
- * Creates the Background object which will become a child of
- * the Drawable object. The background is drawn on the "background"
- * canvas and creates the illusion of moving by panning the image.
- */
 function Background() {
-  // this.speed = 0.5; // Redefine speed of the background for panning
-
-  // // Implement abstract function
-  // this.draw = function() {
-  //   // Pan background
-  //   this.y += this.speed;
-  //   //this.context.clearRect(0,0, this.canvasWidth, this.canvasHeight);
-  //   this.context.drawImage(imageRepository.background, this.x, this.y);
-
-  //   // Draw another image at the top edge of the first image
-  //   this.context.drawImage(imageRepository.background, this.x, this.y - this.canvasHeight);
-
-  //   // If the image scrolled off the screen, reset
-  //   if (this.y >= this.canvasHeight)
-  //     this.y = 0;
-  // };
-
+  
   this.velocity = {'x': 0, 'y': 0.8}; // Redefine speed of the background for panning
   this.velocity2 = {'x': 0, 'y': 0.2};
   this.y2 = 0;
-
 
   // Implement abstract function
   this.draw = function() {
@@ -149,17 +124,13 @@ function Background() {
 // Set Background to inherit properties from Drawable
 Background.prototype = new Drawable();
 
+ // Creates the Bullet object which the ship fires.
+ // These are drawn on the "main" canvas.
 
-/**
- * Creates the Bullet object which the ship fires. The bullets are
- * drawn on the "main" canvas.
- */
 function Bullet(object) {
   this.alive = false; // Is true if the bullet is currently in use
   var self = object;
-  /*
-   * Sets the bullet values
-   */
+  //Sets the bullet values 
   this.spawn = function(x, y, speed) {
     this.x = x;
     this.y = y;
@@ -167,12 +138,11 @@ function Bullet(object) {
     this.alive = true;
   };
 
-  /*
-   * Uses a "drity rectangle" to erase the bullet and moves it.
-   * Returns true if the bullet moved of the screen, indicating that
-   * the bullet is ready to be cleared by the pool, otherwise draws
-   * the bullet.
-   */
+  
+   // Uses a "drity rectangle" to erase the bullet and moves it.
+   // Returns true if the bullet moved of the screen, indicating that
+   // the bullet is ready to be cleared by the pool, otherwise draws it.
+  
   this.draw = function() {
     this.context.clearRect(this.x-1, this.y-1, this.width+2, this.height+2);
     this.y -= this.speed;
@@ -198,9 +168,7 @@ function Bullet(object) {
     }
   };
 
-  /*
-   * Resets the bullet values
-   */
+  // Resets the bullet values
   this.clear = function() {
     this.x = 0;
     this.y = 0;
@@ -214,13 +182,10 @@ Bullet.prototype = new Drawable();
 
 /**
  * QuadTree object.
- *
  * The quadrant indexes are numbered as below:
- *     |
  *  1  |  0
  * ----+----
  *  2  |  3
- *     |
  */
 function QuadTree(boundBox, lvl) {
   var maxObjects = 10;
@@ -530,8 +495,8 @@ function Pool(maxSize) {
  */
 function Ship() {
   this.speed = 3;
-  this.bulletPool = new Pool(30);
-  var fireRate = 12;
+  this.bulletPool = new Pool(20);
+  var fireRate = 10;
   var counter = 0;
   this.collidableWith = "enemyBullet";
   this.type = "ship";
@@ -623,25 +588,25 @@ Ship.prototype = new Drawable();
  * Create the Enemy ship object.
  */
 function Enemy() {
-  var percentFire = 0.007;
-  var chance = 0;
-  this.alive = false;
-  this.collidableWith = "bullet";
-  this.type = "enemy";
-
-  /*
-   * Sets the Enemy values
-   */
+          
+      var percentFire = 0.01;
+      var chance = 0;
+      this.alive = false;
+      this.collidableWith = "bullet";
+      this.type = "enemy";
+  
+   //Sets the Enemy values
+   
   this.spawn = function(x, y, speed) {
     this.x = x;
     this.y = y;
-    this.speed = speed;
+    this.speed = speed + (gameLevel * 0.15);
     this.speedX = 0;
     this.speedY = speed;
     this.alive = true;
     this.leftEdge = this.x - 105;
     this.rightEdge = this.x + 40; //orig 90
-    this.bottomEdge = this.y + 280; //orig 140
+    this.bottomEdge = this.y + (gameLevel * 70) ; //orig 140
   };
 
   /*
@@ -658,7 +623,7 @@ function Enemy() {
       this.speedX = -this.speed;
     }
     else if (this.y >= this.bottomEdge) {
-      this.speed = this.speed * 1.5;
+      this.speed = this.speed;
       this.speedY = 0;
       this.y -= 5;
       this.speedX = -this.speed;
@@ -668,7 +633,9 @@ function Enemy() {
       this.context.drawImage(imageRepository.enemy, this.x, this.y);
 
       // Enemy has a chance to shoot every movement
-      chance = Math.floor(Math.random()*101);
+      
+
+      chance = Math.floor(Math.random()*(250 - (gameLevel*25)));
       if (chance/100 < percentFire) {
         this.fire();
       }
@@ -676,7 +643,7 @@ function Enemy() {
       return false;
     }
     else {
-      game.playerScore += 10;
+      game.playerScore += (10*gameLevel);
       game.explosion.get();
       return true;
     }
@@ -792,9 +759,6 @@ function Game() {
 
       this.checkAudio = window.setInterval(function(){checkReadyState();},1000);
     }
-      function keyDown(e) {
-        if (e.keyCode == 80) pauseGame();
-        }
   };
 
   // Spawn a new wave of enemies
@@ -805,7 +769,7 @@ function Game() {
     var y = -height;
     var spacer = y * 1.5;
     // Enemy total (i), and enemy number across row (i%x)
-    for (var i = 1; i <= 28; i++) {
+    for (var i = 1; i <= (7*gameLevel); i++) {
       this.enemyPool.get(x,y,2);
       x += width + 25;
       if (i % 7 === 0) {
@@ -824,6 +788,7 @@ function Game() {
 
   // Restart the game
   this.restart = function() {
+    gameLevel = 1;
     this.gameOverAudio.pause();
 
     document.getElementById('game-over').style.display = "none";
@@ -922,7 +887,7 @@ function SoundPool(maxSize) {
  */
 function animate() {
   document.getElementById('score').innerHTML = game.playerScore;
-
+  document.getElementById('gameLevel').innerHTML = gameLevel;
   // Insert objects into quadtree
   game.quadTree.clear();
   game.quadTree.insert(game.ship);
@@ -934,6 +899,7 @@ function animate() {
 
   // No more enemies
   if (game.enemyPool.getPool().length === 0) {
+    gameLevel += 1;
     game.spawnWave();
   }
 
