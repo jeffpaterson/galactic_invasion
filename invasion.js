@@ -2,6 +2,8 @@ var game = new Game();
 var gameLevel = 1;
 
 function init() {
+
+  // game.init();
       $('#splashscreen').fadeOut(3000, "swing", game.init());
 }
 
@@ -53,11 +55,12 @@ var imageRepository = new function() {
   // Set images src
   this.background2.src = "imgs/bg-grass.jpg";
   this.background.src = "imgs/flower-fore.png";
-  this.spaceship.src = "imgs/rabbit.gif";
-  this.bullet.src = "imgs/bullet_enemy.png";
+   this.bullet.src = "imgs/bullet_enemy.png";
   this.enemy.src = "imgs/pig2.png";
   this.enemy2.src = "imgs/pig.png";
   this.enemyBullet.src = "imgs/bullet.png";
+  this.spaceship.src = "imgs/rabbit.gif";
+ 
 }();
 
   // Creates the Drawable object, the base class for
