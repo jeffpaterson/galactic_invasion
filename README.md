@@ -6,6 +6,10 @@ Added all new graphics, audio, increasingly difficult game play, infinite number
 
 <i>Forked from Steve Lambert's Space Invader-clone canvas game.</i> 
 
+Play online at:<br>
+<a href="http://jeffpaterson.net/invasion/">http://jeffpaterson.net/invasion/</a><br>
+<i>Chrome desktop browser suggested for best game play.</i>
+
 <img src="imgs/intro.jpg" width="800" alt="Intro screen">
 
 <img src="imgs/screen1.jpg" width="800" alt="Game starting...">
