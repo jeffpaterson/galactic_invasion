@@ -1,8 +1,10 @@
-ASTRO RABBIT PIG INVASION
+<h2>ASTRO RABBIT PIG INVASION</h2>
 
-By Jeff Paterson, March 2016
+<b>By Jeff Paterson, March 2016</b>b>
 
-Forked from Steve Lambert's Space Invader-clone canvas. Added all new graphics, audio, increasingly difficult stages of play, and scoring.
+Forked from Steve Lambert's Space Invader-clone canvas. 
+
+Added all new graphics, audio, increasingly difficult game play, infinite number of stages, and scoring convention.
 
 <img src="imgs/intro.jpg" width="800" alt="Intro screen">
 
